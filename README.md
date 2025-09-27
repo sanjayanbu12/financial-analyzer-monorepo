@@ -16,7 +16,9 @@
 
 📈 Investment Advisor: Synthesizes data to provide reasoned, risk-assessed advice.
 
-🛡️ Risk Assessor: Identifies and categorizes financial, market, and operational risks.⚡ Asynchronous & Real-Time: AI analysis runs as a background task, while the frontend polls for live status updates, ensuring a non-blocking, responsive user experience.
+🛡️ Risk Assessor: Identifies and categorizes financial, market, and operational risks.
+
+⚡ Asynchronous & Real-Time: AI analysis runs as a background task, while the frontend polls for live status updates, ensuring a non-blocking, responsive user experience.
 
 🗂️ Persistent History: All analysis requests and results are stored securely in a MongoDB database, linked to the user's account.
 
