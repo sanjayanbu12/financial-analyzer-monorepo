@@ -1,28 +1,31 @@
-Enterprise-Grade Financial Document AnalyzerThis is the refactored, production-ready version of the Financial Document Analyzer. The original prototype has been completely rebuilt to address critical bugs, security vulnerabilities, performance issues, and architectural flaws.Project StructureThe project is organized into a monorepo structure with distinct frontend and backend applications./
-|-- backend/
-|   |-- app/
-|   |   |-- api/
-|   |   |-- core/
-|   |   |-- crew/
-|   |   |-- db/
-|   |   |-- models/
-|   |   |-- schemas/
-|   |   |-- services/
-|   |   |-- tasks/
-|   |-- .env.example
-|   |-- Dockerfile
-|   |-- main.py
-|   |-- requirements.txt
-|
-|-- frontend/
-|   |-- public/
-|   |-- src/
-|   |-- index.html
-|   |-- package.json
-|   |-- ... (config files)
-|
-|-- docker-compose.yml
-|-- README.md
+Enterprise-Grade Financial Document AnalyzerProject OverviewThis is a full-stack, enterprise-grade application designed for the intelligent analysis of financial documents. The system uses a sophisticated AI crew, powered by Google's Gemini models via CrewAI, to process uploaded financial reports (in PDF format), perform a multi-faceted analysis, and present the results to the user.This project was built to address a complex challenge: to transform an intentionally broken and flawed prototype into a production-ready system. The final application is architecturally sound, secure, and fully functional, demonstrating best practices in full-stack development, AI integration, and system design.Tech StackCategoryTechnologyFrontendReact, Tailwind CSS, Axios, Lucide IconsBackendFastAPI, Python 3.11, UvicornAI EngineCrewAI, LangChain, Google Gemini ProDatabaseMongoDB (with Motor for asynchronous access)SecurityJWT (JSON Web Tokens), Passlib, Argon2Core FeaturesSecure User Authentication: Full registration and login system using JWT for session management. Passwords are securely hashed using the modern argon2 algorithm.Full-Stack Architecture: A clear separation between the React frontend and the high-performance, asynchronous FastAPI backend.PDF Document Upload: Users can upload financial documents directly through a responsive web interface.Sophisticated AI Analysis Crew: The backend utilizes a multi-agent AI crew to analyze documents from different perspectives:Senior Financial Analyst: Extracts and summarizes key financial metrics from the document.Market Research Analyst: Uses web search to provide broader market context.Investment Advisor: Synthesizes the findings to provide reasoned investment advice.Risk Assessor: Identifies and categorizes potential risks.Asynchronous Task Processing: AI analysis is run as a background task, allowing the UI to remain responsive.Real-time Status Updates: The frontend polls the backend to provide users with live updates on the status of their analysis (e.g., "in_progress", "completed", "failed").Analysis History: All analysis requests and their results are stored in a MongoDB database, linked to the user who made the request.Robust Error Handling: The system gracefully handles errors, from invalid user credentials and expired sessions to API failures.PrerequisitesBefore you begin, ensure you have the following installed on your system:Python 3.11.xNode.js v18.x or later (which includes npm)MongoDB (running either locally or accessible via a cloud instance like MongoDB Atlas)Setup & InstallationFollow these steps to set up and run the project locally.1. Clone the Repositorygit clone <your-repository-url>
+cd financial-analyzer-monorepo
+2. Backend SetupFirst, navigate to the backend directory.cd backend
+a. Create and Activate a Virtual Environment:# Create the environment
+python3 -m venv venv
 
+# Activate it (on macOS/Linux)
+source venv/bin/activate
 
-Key Architectural Decisions & Refactoring Highlights1.  Backend (FastAPI)Modular Architecture: The backend is structured into modules (api, core, db, services, crew) for better separation of concerns and maintainability.Asynchronous Operations: The entire stack, from API endpoints to database interactions (motor), is asynchronous to handle concurrent requests efficiently.Background Task Processing: The long-running CrewAI analysis is offloaded to a Celery worker with Redis as the message broker. The API now immediately returns a task ID, preventing request timeouts and allowing the frontend to poll for status updates.Database Integration (MongoDB): MongoDB is used for storing user data, document metadata, and analysis results. GridFS is used for storing the uploaded PDF files, keeping all data within the database ecosystem.Authentication & Security: Implemented robust JWT-based authentication with python-jose and passlib. API endpoints are protected, and user roles can be easily added. Security headers and proper exception handling are in place.Configuration Management: Centralized configuration using Pydantic's BaseSettings, loading sensitive data from environment variables (.env file).Refactored CrewAI Agents & Tasks:The nonsensical and unprofessional prompts have been completely rewritten to perform a genuine, high-quality financial analysis.A structured, multi-agent workflow is now established for validating, extracting, analyzing, and reporting on the document.Robust Tools: The broken PDF tool has been replaced with a functional one using PyPDFLoader from LangChain, integrated properly as a crewai-tool.2.  Frontend (React)Modern Tooling: Built with Vite, React, and TailwindCSS for a fast development experience and a modern, responsive UI.Component-Based Architecture: The UI is broken down into reusable components for authentication, file uploads, dashboard views, and displaying analysis results.State Management: React Context is used for managing global state, such as user authentication status.API Integration: axios is used for seamless communication with the backend, including interceptors to automatically attach JWT tokens to authenticated requests.User Experience: The application provides real-time feedback with loading spinners, progress bars for uploads, and status polling for the analysis process. Final reports are rendered from Markdown for easy readability.3.  Production Readiness & DevOpsContainerization: Dockerfile for the backend and a docker-compose.yml file are provided to orchestrate the entire application stack (FastAPI, React, Celery, Redis, MongoDB), ensuring consistent development and deployment environments.CI/CD Ready: The containerized setup makes the application easy to integrate into any modern CI/CD pipeline.Scalability: The combination of an async backend, background workers, and a robust database makes the system horizontally scalable to handle increased load.This refactored system is now stable, secure, and built on an enterprise-grade foundation.
+# Or activate it (on Windows)
+.\venv\Scripts\activate
+b. Install Dependencies:pip install -r requirements.txt
+c. Configure Environment Variables:Rename the .env.example file to .env.Open the .env file and fill in the required API keys and secrets. See the guide below for instructions on how to get these keys.# Gemini API Key for LLM
+GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+
+# Serper API Key for web search tool
+SERPER_API_KEY="YOUR_SERPER_API_KEY"
+
+# MongoDB Connection String
+MONGO_URI="mongodb://localhost:27017/financial_analyzer"
+
+# JWT Secret Key - Generate with: openssl rand -hex 32
+SECRET_KEY="YOUR_SUPER_SECRET_KEY"
+
+# Dummy key to satisfy a dependency, will not be used
+OPENAI_API_KEY="NA"
+GEMINI_API_KEY: Get from Google AI Studio. Ensure the Vertex AI API is enabled in your Google Cloud project.SERPER_API_KEY: Get from Serper.dev.SECRET_KEY: Generate a secure key by running openssl rand -hex 32 in your terminal.3. Frontend SetupIn a new terminal window, navigate to the frontend directory.cd frontend
+a. Install Dependencies:npm install
+Running the ApplicationYou will need two separate terminal windows to run both the backend and frontend servers.1. Start the Backend ServerMake sure you are in the backend directory and your virtual environment (venv) is active.Run the following command:python -m uvicorn main:app --reload
+The backend API will be running at http://localhost:8000.2. Start the Frontend ServerMake sure you are in the frontend directory.Run the following command:npm start
+The React application will open in your browser at http://localhost:3000.You can now register an account, log in, and start analyzing financial documents!

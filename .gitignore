@@ -1,55 +1,25 @@
-# --- Secrets ---
-# Ignore environment files containing secret keys
-backend/.env
-
-# --- Python / FastAPI Backend ---
-# Virtual environment
-venv/
-*.venv/
-env/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Build and distribution artifacts
-*.egg-info/
-dist/
-build/
-
-# --- Node.js / React Frontend ---
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-build/
-
-# Vite cache
-.vite/
-
-# Log files
-npm-debug.log*
-yarn-error.log
-yarn-debug.log
-lerna-debug.log
-
-# --- OS / System Files ---
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
-Thumbs.db
-ehthumbs.db
-ehthumbs_vista.db
-
-# --- IDE / Editor Config ---
+# General IDE, OS, and environment files
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.DS_Store
+*.swp
+*.swo
+
+# Local environment files (should not be committed)
+.env
+
+# Backend - Python/FastAPI
+backend/venv/
+backend/.venv/
+backend/env/
+backend/__pycache__/
+backend/*.pyc
+backend/uploads/
+backend/.coverage
+backend/htmlcov/
+backend/dist/
+backend/build/
+backend/*.egg-info/
+
+# Frontend - Node/React
+frontend/node_modules/

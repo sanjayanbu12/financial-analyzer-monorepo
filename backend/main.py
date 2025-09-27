@@ -1,35 +1,47 @@
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.routers.auth import auth_router
-from app.api.v1.routers.documents import documents_router
-from app.core.config import settings
-from app.db.database import connect_to_mongo, close_mongo_connection
+from routers import auth, analysis
+from db.database import connect_to_mongo, close_mongo_connection
+
+# Create the "uploads" directory if it doesn't exist
+os.makedirs("uploads", exist_ok=True)
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    title="Enterprise Financial Document Analyzer",
+    description="A production-grade system for analyzing financial documents using AI.",
+    version="1.0.0"
 )
 
-# Add event handlers
-app.add_event_handler("startup", connect_to_mongo)
-app.add_event_handler("shutdown", close_mongo_connection)
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allows frontend to connect
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Set up CORS
-if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=[str(origin).strip() for origin in settings.BACKEND_CORS_ORIGINS],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+# App lifecycle events
+@app.on_event("startup")
+async def startup_event():
+    await connect_to_mongo()
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    await close_mongo_connection()
+
+# Health check endpoint
 @app.get("/", tags=["Health Check"])
 async def root():
-    """Health check endpoint."""
-    return {"message": "Financial Document Analyzer API is running"}
+    """A simple health check endpoint to confirm the API is running."""
+    return {"status": "ok", "message": "Financial Analyzer API is running"}
 
+# Include routers
+app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(analysis.router, prefix="/analysis", tags=["Analysis"])
 
-app.include_router(auth_router, prefix=settings.API_V1_STR, tags=["Authentication"])
-app.include_router(documents_router, prefix=settings.API_V1_STR, tags=["Documents & Analysis"])
-
+# Add a generic exception handler for unexpected errors
+@app.exception_handler(Exception)
+async def generic_exception_handler(request, exc):
+    return HTTPException(status_code=500, detail="An unexpected internal server error occurred.")
