@@ -1,4 +1,4 @@
-🚀 <div align="center">Enterprise Financial Analyzer</div> 🚀From a broken prototype to a production-ready, full-stack AI system. This project transforms complex financial documents into actionable insights.
+🚀 Enterprise Financial Analyzer 🚀<div align="center">From a broken prototype to a production-ready, full-stack AI system. This project transforms complex financial documents into actionable insights.</div>
 
 ✨ Core FeaturesThis application was re-architected from the ground up to be a robust, scalable, and secure platform for AI-powered financial analysis.
 
@@ -8,7 +8,11 @@
 
 📄 PDF Document Processing: Seamlessly upload and manage financial reports through a sleek, responsive user interface.
 
-🤖 Sophisticated AI Crew: A multi-agent system powered by Google Gemini & CrewAI work in concert to deliver deep analysis:🕵️‍♂️ Financial Analyst: Extracts and summarizes key financial metrics.🌐 Market Researcher: Scours the web for industry news and economic trends.
+🤖 Sophisticated AI Crew: A multi-agent system powered by Google Gemini & CrewAI work in concert to deliver deep analysis:
+
+🕵️‍♂️ Financial Analyst: Extracts and summarizes key financial metrics.
+
+🌐 Market Researcher: Scours the web for industry news and economic trends.
 
 📈 Investment Advisor: Synthesizes data to provide reasoned, risk-assessed advice.
 
