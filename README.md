@@ -22,7 +22,9 @@
 
 🛠️ Technology StackCategoryTechnologyFrontendBackendAI EngineDatabaseSecuritypasslib & argon2
 
-🏁 Getting StartedFollow these steps to set up and run the project locally.PrerequisitesPython 3.11.xNode.js v18.x or laterMongoDB (running locally or on a service like Atlas)⚙️ Environment SetupClone the Repository:git clone <your-repository-url>
+🏁 Getting StartedFollow these steps to set up and run the project locally.PrerequisitesPython 3.11.xNode.js v18.x or laterMongoDB (running locally or on a service like Atlas)
+
+⚙️ Environment SetupClone the Repository:git clone <your-repository-url>
 cd financial-analyzer-monorepo
 Configure Backend Environment:Navigate to the backend directory.Rename .env.example to .env.Open the .env file and add your secret keys and database URI.<details><summary>Click here for details on getting your API keys.</summary>GEMINI_API_KEY: Get from Google AI Studio. Crucially, ensure the Vertex AI API is enabled in your Google Cloud project.SERPER_API_KEY: Get a free key from Serper.dev.SECRET_KEY: Generate a secure key by running openssl rand -hex 32 in your terminal.</details>🚀 Running the ApplicationYou will need two separate terminals to run the application.<div style="display: flex; gap: 2rem;"><div style="flex: 1;">Terminal 1: Start the Backend# Navigate to the backend directory
 cd backend
