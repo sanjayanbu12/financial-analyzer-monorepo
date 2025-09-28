@@ -10,22 +10,23 @@ class Settings(BaseSettings):
     Application settings loaded from environment variables.
     pydantic-settings handles loading from the .env file automatically.
     """
-    # Required settings that must be in the .env file
+    
+    # Required API keys and database connection
     GEMINI_API_KEY: str
     SERPER_API_KEY: str
     MONGO_URI: str
     SECRET_KEY: str
-
-    # Settings with default values
+    
+    # JWT authentication configuration
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-
-    # Optional setting to satisfy the tool's dependency check
+    
+    # Optional API key for compatibility
     OPENAI_API_KEY: Optional[str] = None
-
+    
     class Config:
-        # Specifies which .env file to read from
+        # Environment file configuration
         env_file = ".env"
 
-# Instantiate the settings
+# Global settings instance
 settings = Settings()

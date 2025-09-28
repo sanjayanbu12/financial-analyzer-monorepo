@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { LogIn, UserPlus, Upload, FileText, Clock, CheckCircle, XCircle, LogOut, Loader, Inbox, BrainCircuit, Search, ArrowRight, Shield, Zap, TrendingUp, BarChart3, Users, Star, ChevronRight, Menu, X } from 'lucide-react';
+import { Upload, FileText, Clock, CheckCircle, XCircle, LogOut, Loader, Inbox, BrainCircuit, ArrowRight, Shield, Zap, TrendingUp, BarChart3, Users, Star, ChevronRight, Menu, X } from 'lucide-react';
 
 const API_URL = 'http://localhost:8000';
 
-// Axios instance for authenticated requests
+// === API CONFIGURATION ===
+// Create axios instance with automatic token injection for authenticated requests
 const authAxios = axios.create({
     baseURL: API_URL,
 });
 
+// Automatically add Bearer token to all requests
 authAxios.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -17,7 +19,7 @@ authAxios.interceptors.request.use((config) => {
     return config;
 });
 
-// --- Enhanced UI Components ---
+// === REUSABLE UI COMPONENTS ===
 
 const Card = ({ children, className = '', hover = false }) => (
     <div className={`bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl border border-white/20 ${hover ? 'hover:shadow-2xl hover:scale-105 transition-all duration-300' : ''} ${className}`}>
@@ -68,11 +70,12 @@ const Input = ({ id, type, placeholder, value, onChange, icon: Icon }) => (
     </div>
 );
 
-// --- Landing Page Component ---
-
+// === LANDING PAGE COMPONENT ===
+// Marketing page with hero section, features, testimonials and call-to-action
 const LandingPage = ({ onGetStarted }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+    // Static data for marketing content
     const features = [
         {
             icon: BrainCircuit,
@@ -119,14 +122,14 @@ const LandingPage = ({ onGetStarted }) => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-            {/* Animated background elements */}
+            {/* Animated background elements for visual appeal */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
                 <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
                 <div className="absolute top-40 left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation Bar */}
             <nav className="relative z-10 px-6 py-4">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-2 text-white">
@@ -168,7 +171,7 @@ const LandingPage = ({ onGetStarted }) => {
                 )}
             </nav>
 
-            {/* Hero Section */}
+            {/* Hero Section - Main value proposition */}
             <section className="relative z-10 px-6 py-20 text-center">
                 <div className="max-w-4xl mx-auto">
                     <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
@@ -211,7 +214,7 @@ const LandingPage = ({ onGetStarted }) => {
                 </div>
             </section>
 
-            {/* Stats Section */}
+            {/* Stats Section - Social proof with numbers */}
             <section className="relative z-10 px-6 py-16">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
@@ -257,7 +260,7 @@ const LandingPage = ({ onGetStarted }) => {
                 </div>
             </section>
 
-            {/* CTA Section */}
+            {/* Final Call-to-Action Section */}
             <section className="relative z-10 px-6 py-20">
                 <div className="max-w-4xl mx-auto text-center">
                     <Card className="p-12">
@@ -277,8 +280,9 @@ const LandingPage = ({ onGetStarted }) => {
     );
 };
 
-// --- Enhanced Authentication Components ---
+// === AUTHENTICATION COMPONENTS ===
 
+// Login/Register form with validation and error handling
 const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
     const [formData, setFormData] = useState({ username: '', email: '', password: '', fullName: '' });
     const [error, setError] = useState('');
@@ -288,6 +292,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // Handle form submission for both login and registration
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -295,6 +300,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
 
         try {
             if (isLogin) {
+                // Login flow - get access token
                 const url = `${API_URL}/auth/token`;
                 const params = new URLSearchParams();
                 params.append('username', formData.username);
@@ -303,6 +309,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
                 localStorage.setItem('token', response.data.access_token);
                 onAuthSuccess();
             } else {
+                // Registration flow - create account then login
                 const registerUrl = `${API_URL}/auth/register`;
                 await axios.post(registerUrl, {
                     username: formData.username,
@@ -311,6 +318,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
                     full_name: formData.fullName
                 });
                 
+                // Automatically login after registration
                 const tokenUrl = `${API_URL}/auth/token`;
                 const params = new URLSearchParams();
                 params.append('username', formData.username);
@@ -328,6 +336,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
 
     return (
         <div className="space-y-8">
+            {/* Header Section */}
             <div className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-4">
                     <BrainCircuit size={40} className="text-blue-500" />
@@ -343,6 +352,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
                 </p>
             </div>
 
+            {/* Form Fields */}
             <form onSubmit={handleSubmit} className="space-y-6">
                 {!isLogin && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -394,6 +404,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
                     onChange={handleChange} 
                 />
                 
+                {/* Error Display */}
                 {error && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                         <p className="text-red-600 text-sm text-center">{error}</p>
@@ -407,6 +418,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
                 </Button>
             </form>
 
+            {/* Toggle between login/register */}
             <div className="text-center">
                 <p className="text-gray-600">
                     {isLogin ? "Don't have an account?" : 'Already have an account?'}
@@ -422,6 +434,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggleMode }) => {
     );
 };
 
+// Authentication page wrapper with background
 const AuthPage = ({ onAuthSuccess, onBackToLanding }) => {
     const [isLogin, setIsLogin] = useState(true);
 
@@ -455,8 +468,9 @@ const AuthPage = ({ onAuthSuccess, onBackToLanding }) => {
     );
 };
 
-// --- Enhanced Dashboard Components ---
+// === DASHBOARD COMPONENTS ===
 
+// File upload form with drag-and-drop and progress tracking
 const UploadForm = ({ onAnalysisStart }) => {
     const [file, setFile] = useState(null);
     const [query, setQuery] = useState('Provide a comprehensive analysis of this financial document, highlighting key performance indicators, investment potential, and major risks.');
@@ -475,6 +489,7 @@ const UploadForm = ({ onAnalysisStart }) => {
         }
     };
 
+    // Submit file for analysis with progress tracking
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!file) {
@@ -514,6 +529,7 @@ const UploadForm = ({ onAnalysisStart }) => {
     return (
         <Card className="p-8">
             <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Header */}
                 <div className="text-center">
                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                         <BrainCircuit size={40} className="text-white" />
@@ -522,6 +538,7 @@ const UploadForm = ({ onAnalysisStart }) => {
                     <p className="text-gray-600">Upload a PDF document to get comprehensive AI-powered financial analysis</p>
                 </div>
                 
+                {/* File Upload Zone */}
                 <div className="space-y-4">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Document Upload</label>
                     <div className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${file ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'}`}>
@@ -549,6 +566,7 @@ const UploadForm = ({ onAnalysisStart }) => {
                     </div>
                 </div>
 
+                {/* Analysis Query Input */}
                 <div className="space-y-4">
                     <label htmlFor="query" className="block text-sm font-semibold text-gray-700">Analysis Focus</label>
                     <textarea
@@ -561,6 +579,7 @@ const UploadForm = ({ onAnalysisStart }) => {
                     />
                 </div>
                 
+                {/* Error and Progress Display */}
                 {error && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                         <p className="text-red-600 text-sm text-center">{error}</p>
@@ -600,9 +619,11 @@ const UploadForm = ({ onAnalysisStart }) => {
     );
 };
 
+// Display analysis results with formatted content and status indicators
 const AnalysisResult = ({ analysis }) => {
     if (!analysis) return null;
 
+    // Status indicator component
     const renderStatus = () => {
         switch (analysis.status) {
             case 'pending':
@@ -632,6 +653,7 @@ const AnalysisResult = ({ analysis }) => {
         }
     };
 
+    // Format analysis text with proper styling and structure
     const formatResult = (text) => {
         if (!text) return null;
         
@@ -640,8 +662,8 @@ const AnalysisResult = ({ analysis }) => {
         let currentSection = null;
         let currentSubSection = null;
         
+        // Handle inline formatting like **bold text**
         const parseInlineFormatting = (text) => {
-            // Handle bold text **text**
             const parts = text.split(/(\*\*[^*]+\*\*)/);
             return parts.map((part, idx) => {
                 if (part.startsWith('**') && part.endsWith('**')) {
@@ -651,6 +673,7 @@ const AnalysisResult = ({ analysis }) => {
             });
         };
         
+        // Parse text line by line to create structured content
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
             
@@ -792,6 +815,7 @@ const AnalysisResult = ({ analysis }) => {
 
     return (
         <Card className="mt-8 p-8">
+            {/* Analysis Header with metadata */}
             <div className="border-b border-gray-200 pb-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
@@ -812,6 +836,7 @@ const AnalysisResult = ({ analysis }) => {
                 </div>
             </div>
 
+            {/* Processing State */}
             {(analysis.status === 'pending' || analysis.status === 'in_progress') && (
                 <div className="text-center py-16">
                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
@@ -822,6 +847,7 @@ const AnalysisResult = ({ analysis }) => {
                 </div>
             )}
             
+            {/* Completed Analysis */}
             {analysis.status === 'completed' && (
                 <div className="space-y-6">
                     <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 mb-6 border border-green-200">
@@ -844,6 +870,7 @@ const AnalysisResult = ({ analysis }) => {
                 </div>
             )}
 
+            {/* Failed Analysis */}
             {analysis.status === 'failed' && (
                 <div className="text-center py-16">
                     <div className="bg-red-500 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
@@ -860,10 +887,12 @@ const AnalysisResult = ({ analysis }) => {
     );
 };
 
+// Sidebar component showing analysis history with status indicators
 const HistoryPanel = ({ onSelectAnalysis }) => {
     const [history, setHistory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     
+    // Fetch user's analysis history from API
     const fetchHistory = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -880,6 +909,7 @@ const HistoryPanel = ({ onSelectAnalysis }) => {
         fetchHistory();
     }, [fetchHistory]);
 
+    // Status icon based on analysis state
     const StatusIcon = ({ status }) => {
         switch (status) {
             case 'completed': return <CheckCircle className="text-green-500" size={20} />;
@@ -898,12 +928,14 @@ const HistoryPanel = ({ onSelectAnalysis }) => {
                 <h2 className="text-xl font-bold text-gray-800">History</h2>
             </div>
             
+            {/* Loading State */}
             {isLoading ? (
                 <div className="text-center py-12">
                     <Loader className="animate-spin text-blue-600 mx-auto mb-4" size={32} />
                     <p className="text-gray-500">Loading history...</p>
                 </div>
             ) : history.length === 0 ? (
+                // Empty State
                 <div className="text-center py-12">
                     <div className="bg-gray-100 rounded-full p-6 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                         <FileText className="text-gray-400" size={32} />
@@ -912,6 +944,7 @@ const HistoryPanel = ({ onSelectAnalysis }) => {
                     <p className="text-gray-400 text-sm">Upload your first document to get started</p>
                 </div>
             ) : (
+                // History List
                 <div className="space-y-3 overflow-y-auto max-h-[50vh]">
                     {history.map(item => (
                         <div 
@@ -946,10 +979,12 @@ const HistoryPanel = ({ onSelectAnalysis }) => {
     );
 };
 
+// Main dashboard layout with real-time polling for analysis status
 const Dashboard = ({ onLogout }) => {
     const [currentAnalysis, setCurrentAnalysis] = useState(null);
     const [pollingInterval, setPollingInterval] = useState(null);
 
+    // Stop polling for analysis updates
     const stopPolling = () => {
         if (pollingInterval) {
             clearInterval(pollingInterval);
@@ -957,10 +992,12 @@ const Dashboard = ({ onLogout }) => {
         }
     };
     
+    // Fetch current analysis status from API
     const fetchAnalysisStatus = useCallback(async (requestId) => {
         try {
             const response = await authAxios.get(`/analysis/status/${requestId}`);
             setCurrentAnalysis(response.data);
+            // Stop polling when analysis is complete or failed
             if (response.data.status === 'completed' || response.data.status === 'failed') {
                 stopPolling();
             }
@@ -970,28 +1007,32 @@ const Dashboard = ({ onLogout }) => {
         }
     }, []);
 
+    // Start new analysis and begin polling for updates
     const handleAnalysisStart = (requestId) => {
         stopPolling();
         setCurrentAnalysis({ request_id: requestId, status: 'pending' });
         fetchAnalysisStatus(requestId);
+        // Poll every 3 seconds for status updates
         const interval = setInterval(() => {
             fetchAnalysisStatus(requestId);
         }, 3000);
         setPollingInterval(interval);
     };
     
+    // Handle selection from history panel
     const handleSelectAnalysis = (requestId) => {
         stopPolling();
         fetchAnalysisStatus(requestId);
     };
 
+    // Cleanup polling on component unmount
     useEffect(() => {
         return () => stopPolling();
     }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-            {/* Enhanced Header */}
+            {/* Header with branding and logout */}
             <header className="bg-white/80 backdrop-blur-lg shadow-xl border-b border-white/20 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex justify-between items-center">
@@ -1021,7 +1062,7 @@ const Dashboard = ({ onLogout }) => {
                 </div>
             </header>
 
-            {/* Enhanced Main Content */}
+            {/* Main Dashboard Layout */}
             <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* History Sidebar */}
@@ -1058,24 +1099,28 @@ const Dashboard = ({ onLogout }) => {
     );
 };
 
-// --- Main App Component ---
+// === MAIN APPLICATION COMPONENT ===
+// Root component managing application state and routing between views
 
 function App() {
     const [currentView, setCurrentView] = useState('landing'); // 'landing', 'auth', 'dashboard'
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Handle user logout - clear token and redirect to landing
     const handleLogout = useCallback(() => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
         setCurrentView('landing');
     }, []);
 
+    // Handle successful authentication
     const handleAuthSuccess = () => {
         setIsAuthenticated(true);
         setCurrentView('dashboard');
     };
 
+    // Navigation handlers
     const handleGetStarted = () => {
         setCurrentView('auth');
     };
@@ -1084,6 +1129,7 @@ function App() {
         setCurrentView('landing');
     };
     
+    // Check for existing authentication on app load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -1092,7 +1138,7 @@ function App() {
         }
         setIsLoading(false);
 
-        // Global error handler for authenticated requests
+        // Global error handler for 401 responses - auto logout on auth failure
         const interceptor = authAxios.interceptors.response.use(
             (response) => response,
             (error) => {
@@ -1108,6 +1154,7 @@ function App() {
         };
     }, [handleLogout]);
 
+    // Loading screen while checking authentication
     if (isLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -1121,7 +1168,7 @@ function App() {
         );
     }
 
-    // Render based on current view
+    // Route to appropriate view based on current state
     switch (currentView) {
         case 'landing':
             return <LandingPage onGetStarted={handleGetStarted} />;

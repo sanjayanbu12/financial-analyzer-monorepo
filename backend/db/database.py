@@ -1,6 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from core.config import settings
 
+# Global MongoDB client instance
 client: AsyncIOMotorClient = None
 
 async def connect_to_mongo():
@@ -17,9 +18,9 @@ async def close_mongo_connection():
         print("MongoDB connection closed.")
 
 async def get_database():
-    """Returns the database instance."""
+    """Returns the database instance, initializing connection if needed."""
     if client is None:
         await connect_to_mongo()
-    # The database name can be extracted from the URI or set explicitly
-    # Assuming the database name is part of the MONGO_URI
+    
+    # Use default database name from URI or fallback to 'financial_analyzer'
     return client.get_default_database(default="financial_analyzer")

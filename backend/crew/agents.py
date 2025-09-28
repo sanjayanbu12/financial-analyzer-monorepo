@@ -3,16 +3,19 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from core.config import settings
 from .tools import PDFSearchTool, SerperSearchTool
 
-# Initialize the LLM with the gemini-1.5-flash model
+# Initialize Gemini LLM for all agents
 llm = ChatGoogleGenerativeAI(
-model="gemini-2.0-flash",
+    model="gemini-2.0-flash",
     verbose=True,
     temperature=0.2,
     google_api_key=settings.GEMINI_API_KEY
 )
 
 class FinancialAnalysisAgents:
+    """Collection of specialized AI agents for comprehensive financial analysis"""
+    
     def financial_analyst(self):
+        """Creates agent for detailed financial document analysis"""
         return Agent(
             role="Senior Financial Analyst",
             goal="""
@@ -36,6 +39,7 @@ class FinancialAnalysisAgents:
         )
 
     def research_analyst(self):
+        """Creates agent for market research and economic context analysis"""
         return Agent(
             role="Market Research Analyst",
             goal="""
@@ -58,6 +62,7 @@ class FinancialAnalysisAgents:
         )
     
     def investment_advisor(self):
+        """Creates agent for generating investment recommendations"""
         return Agent(
             role="Prudent Investment Advisor",
             goal="""
@@ -79,6 +84,7 @@ class FinancialAnalysisAgents:
         )
 
     def risk_assessor(self):
+        """Creates agent for comprehensive risk evaluation"""
         return Agent(
             role="Comprehensive Risk Assessor",
             goal="""

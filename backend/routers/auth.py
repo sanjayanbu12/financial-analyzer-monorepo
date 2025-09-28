@@ -11,7 +11,7 @@ async def register_user(user: UserCreate, db = Depends(get_database)):
     """
     Handles user registration. Hashes the password and saves the new user to the database.
     """
-    # Check if user already exists
+    # Check for existing username to prevent duplicates
     existing_user = await db["users"].find_one({"username": user.username})
     if existing_user:
         raise HTTPException(
@@ -19,26 +19,27 @@ async def register_user(user: UserCreate, db = Depends(get_database)):
             detail="Username already registered",
         )
     
+    # Hash password for secure storage
     hashed_password = get_password_hash(user.password)
     
-    # --- THIS IS THE CORRECTED PART ---
-    # Create a dictionary from the user data, excluding the plain password
+    # Create database user model with hashed password
     user_data = user.dict(exclude={'password'})
-    
-    # Create the database model instance with the hashed password
     user_in_db = UserInDB(**user_data, hashed_password=hashed_password)
-    # ------------------------------------
     
+    # Save user to database
     await db["users"].insert_one(user_in_db.dict())
     
-    # Return the new user object (FastAPI will handle filtering out the hashed_password)
     return user_in_db
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db = Depends(get_database)):
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(), 
+    db = Depends(get_database)
+):
     """
     Provides a JWT token for valid user credentials.
     """
+    # Authenticate user credentials
     user = await db["users"].find_one({"username": form_data.username})
     if not user or not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(
@@ -47,6 +48,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    # Generate JWT access token
     access_token = create_access_token(
         data={"sub": user["username"]}
     )
