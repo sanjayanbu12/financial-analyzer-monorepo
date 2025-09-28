@@ -188,9 +188,6 @@ const LandingPage = ({ onGetStarted }) => {
                         <Button onClick={onGetStarted} size="lg">
                             Start Free Analysis <ArrowRight size={20} />
                         </Button>
-                        <Button variant="ghost" size="lg" className="text-white border border-white/20">
-                            Watch Demo <span className="text-2xl ml-2">▶</span>
-                        </Button>
                     </div>
                 </div>
             </section>
